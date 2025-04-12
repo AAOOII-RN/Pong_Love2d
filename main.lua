@@ -48,6 +48,8 @@ function love.load()
     winrate = 0
 
     time = 0
+
+    afk = false
 end
 
 function ball_reset()
@@ -70,6 +72,7 @@ function love.update(dt)
         points.bot = points.bot + 1
     end
     
+    -- check goal
     if ball.x - ball.radius <= 0  then
         ball_reset()
         points.player = points.player + 1
@@ -92,11 +95,32 @@ function love.update(dt)
         ball.speed.x = math.abs(ball.speed.x)
     end
 
+     -- switch afk
+     if love.keyboard.isDown("q") then
+        afk = true
+    elseif love.keyboard.isDown("e") then
+        afk = false
+    end
+
     -- Control player's paddle
-    if love.keyboard.isDown("down") then
-        player.y = player.y + player.speed
-    elseif love.keyboard.isDown("up") then
-        player.y = player.y - player.speed
+    if not afk then
+        if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
+            player.y = player.y + player.speed
+        elseif love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+            player.y = player.y - player.speed
+        end
+    end
+
+    if afk then
+        if ball.x > ww/2 then
+            if ball.y < player.y + player.h / 2 then
+                player.y = player.y - player.speed
+            end
+        
+            if ball.y > player.y + player.h / 2 then
+                player.y = player.y + player.speed
+            end
+        end
     end
 
     -- Player's paddle limits
@@ -109,8 +133,7 @@ function love.update(dt)
     end
 
     -- AI
-
-    if math.random(1, 100) < 75 * winrate then
+    if math.random(1, 100) < 50 * winrate then
         botFocus = {
             x = ball.x,
             y = ball.y
@@ -144,8 +167,15 @@ function love.update(dt)
 end
 
 function love.draw()
+    -- Auto mode
+    love.graphics.printf("Auto Mode: " .. tostring(afk), ww / 2, wh/8, ww / 2, "center")
+
     -- background
     love.graphics.setBackgroundColor(0.96, 0.96, 0.96)
+
+    -- Draw the scores
+    love.graphics.printf(points.bot, 0, wh/2, ww / 4, "center", 0, 2, 2)
+    love.graphics.printf(points.player, ww / 2, wh/2, ww/4, "center", 0, 2, 2)
 
     -- Draw the center line
     love.graphics.setColor(0, 0, 0)
@@ -161,8 +191,4 @@ function love.draw()
 
     love.graphics.setColor(0.3, 0, 1)
     love.graphics.rectangle("fill", bot.x, bot.y, bot.w, bot.h)
-
-    -- Draw the scores
-    love.graphics.printf(points.bot, 0, wh/2, ww / 4, "center", 0, 2, 2)
-    love.graphics.printf(points.player, ww / 2, wh/2, ww/4, "center", 0, 2, 2)
 end
