@@ -3,6 +3,7 @@ function love.load()
 
     math.randomseed(os.time())
     love.window.setMode(1080, 800)
+    love.window.setTitle("Pong - AAOOII")
 
     ww, wh = love.window.getMode()
 
@@ -59,14 +60,10 @@ function ball_reset()
     ball.y = wh/2
     ball.speed.x = math.random(0, 1) == 0 and -1 or 1
     ball.speed.y = math.random(0, 1) == 0 and -1 or 1
-    rate = 200
-    time = 0
 end
 
 function love.update(dt)
     time = time + 1 * dt
-
-    rate = 200 + time*10
 
     ball.x = ball.x + ball.speed.x * rate * dt
     ball.y = ball.y + ball.speed.y * rate * dt
@@ -179,7 +176,6 @@ function love.draw()
     -- Miscs
     love.graphics.printf("Auto Mode: " .. tostring(afk), ww / 2, 10, ww / 2, "center")
     love.graphics.printf("Difficulty: " .. tostring(winrate * 100), ww / 2, 30, ww / 2, "center")
-    love.graphics.printf("Speed: " .. tostring(math.floor(rate)), ww / 2, 50, ww / 2, "center")
 
     -- background
     love.graphics.setBackgroundColor(0.96, 0.96, 0.96)
