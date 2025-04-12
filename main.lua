@@ -148,7 +148,9 @@ function love.update(dt)
         if botFocus.y > bot.y + bot.h / 2 then
             bot.y = bot.y + bot.speed
         end
-    else -- sillyness
+    end
+
+    if botFocus.x > ww/2 then -- sillyness
         if math.sin(time*10)*100 > 0 then
             bot.y = bot.y + bot.speed
         else
