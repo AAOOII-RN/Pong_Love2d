@@ -1,5 +1,5 @@
 # Pong made in Love2d
-A simple game of Pong against a bot.
+A simple game of Pong against my customized bot.
 
 # Auto Mode
 Auto Mode lets AI control your paddle.
