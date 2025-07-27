@@ -15,8 +15,8 @@ function love.load()
         y = wh/2 + 65,
         radius = 15,
         speed = {
-            x = math.random(0, 1) == 0 and -1 or 1,
-            y = math.random(0, 1) == 0 and -1 or 1
+            x = math.sin(math.random(0, 2*math.pi)),
+            y = math.cos(math.random(0, 2*math.pi))
         }
     }
 
@@ -50,25 +50,27 @@ function love.load()
 
     time = 0
 
-    rate = 200
+    rate = 100
 
     afk = false
 end
 
 function ball_reset()
+    rate = 100
     ball.x = ww/2
     ball.y = wh/2
-    ball.speed.x = math.random(0, 1) == 0 and -1 or 1
-    ball.speed.y = math.random(0, 1) == 0 and -1 or 1
+    ball.speed.x = math.sin(math.random(0, 2*math.pi))
+    ball.speed.y = math.cos(math.random(0, 2*math.pi))
 end
 
 function love.update(dt)
     time = time + 1 * dt
+    rate = rate + 10 * dt
 
     ball.x = ball.x + ball.speed.x * rate * dt
     ball.y = ball.y + ball.speed.y * rate * dt
 
-    winrate = points.player / (points.player + points.bot + 1)
+    winrate = points.player / (points.player + points.bot + 0.01)
 
     -- Check goal
     if ball.x + ball.radius >= ww + ball.radius*2 then
@@ -84,10 +86,12 @@ function love.update(dt)
     -- check top and bottom
     if ball.y + ball.radius >= wh then
         ball.speed.y = -math.abs(ball.speed.y)
+        ball.speed.x = math.sin(math.random(0, 2*math.pi))
     end
 
     if ball.y - ball.radius <= 0  then
         ball.speed.y = math.abs(ball.speed.y)
+        ball.speed.x = math.sin(math.random(0, 2*math.pi))
     end
 
     -- Check paddles' collision
@@ -97,13 +101,6 @@ function love.update(dt)
 
     if ball.x - ball.radius <= bot.x + bot.w and ball.y + ball.radius >= bot.y and ball.y - ball.radius <= bot.y + bot.h then
         ball.speed.x = math.abs(ball.speed.x)
-    end
-
-     -- switch afk
-     if love.keyboard.isDown("q") then
-        afk = true
-    elseif love.keyboard.isDown("e") then
-        afk = false
     end
 
     -- Control player's paddle
@@ -117,11 +114,11 @@ function love.update(dt)
 
     if afk then
         if ball.x > ww/2 then
-            if ball.y < player.y + player.h / 2 then
+            if ball.y < player.y + player.h then
                 player.y = player.y - player.speed
             end
         
-            if ball.y > player.y + player.h / 2 then
+            if ball.y > player.y + player.h then
                 player.y = player.y + player.speed
             end
         end
@@ -137,7 +134,7 @@ function love.update(dt)
     end
 
     -- AI
-    if math.random(1, 100) < 25 * winrate then
+    if math.random(1, 100) < 50 * winrate then
         botFocus = {
             x = ball.x,
             y = ball.y
@@ -145,11 +142,11 @@ function love.update(dt)
     end
 
     if botFocus.x < ww/2 then
-        if botFocus.y < bot.y + bot.h / 2 then
+        if botFocus.y < bot.y + bot.h then
             bot.y = bot.y - bot.speed
         end
     
-        if botFocus.y > bot.y + bot.h / 2 then
+        if botFocus.y > bot.y + bot.h then
             bot.y = bot.y + bot.speed
         end
     end
@@ -172,10 +169,18 @@ function love.update(dt)
     end
 end
 
+function love.keypressed(k)
+    if k == "space" then
+        afk = not afk
+    end
+end
+
 function love.draw()
     -- Miscs
+    love.graphics.setColor(0,0,0.5)
     love.graphics.printf("Auto Mode: " .. tostring(afk), ww / 2, 10, ww / 2, "center")
-    love.graphics.printf("Difficulty: " .. tostring(winrate * 100), ww / 2, 30, ww / 2, "center")
+    love.graphics.printf("Difficulty: " .. math.floor(winrate * 100), ww / 2, 30, ww / 2, "center")
+    love.graphics.printf("Rate: " .. math.floor(rate), ww / 2, 50, ww / 2, "center")
 
     -- background
     love.graphics.setBackgroundColor(0.96, 0.96, 0.96)
