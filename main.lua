@@ -10,13 +10,15 @@ function love.load()
     font = love.graphics.newFont("Exo.ttf")
     love.graphics.setFont(font)
 
+    dir = math.random(0, 2*math.pi)
+
     ball = {
         x = ww/2,
         y = wh/2 + 65,
         radius = 15,
-        speed = {
-            x = math.sin(math.random(0, 2*math.pi)),
-            y = math.cos(math.random(0, 2*math.pi))
+        speed = {            
+            x = math.sin(dir),
+            y = math.cos(dir)
         }
     }
 
@@ -59,13 +61,14 @@ function ball_reset()
     rate = 100
     ball.x = ww/2
     ball.y = wh/2
-    ball.speed.x = math.sin(math.random(0, 2*math.pi))
-    ball.speed.y = math.cos(math.random(0, 2*math.pi))
+    ball.speed.x = math.sin(dir)
+    ball.speed.y = math.cos(dir)
 end
 
 function love.update(dt)
     time = time + 1 * dt
     rate = rate + 10 * dt
+    dir = math.random(0, 2*math.pi)
 
     ball.x = ball.x + ball.speed.x * rate * dt
     ball.y = ball.y + ball.speed.y * rate * dt
@@ -86,12 +89,12 @@ function love.update(dt)
     -- check top and bottom
     if ball.y + ball.radius >= wh then
         ball.speed.y = -math.abs(ball.speed.y)
-        ball.speed.x = math.sin(math.random(0, 2*math.pi))
+        ball.speed.x = math.sin(dir)
     end
 
     if ball.y - ball.radius <= 0  then
         ball.speed.y = math.abs(ball.speed.y)
-        ball.speed.x = math.sin(math.random(0, 2*math.pi))
+        ball.speed.x = math.sin(dir)
     end
 
     -- Check paddles' collision
