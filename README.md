@@ -1,5 +1,5 @@
 # Pong made in Love2d
-A casual game of Pong against a bot.
+A casual game of Pong against a custom bot.
 
 # Auto Mode
 Auto Mode lets AI control your paddle.
